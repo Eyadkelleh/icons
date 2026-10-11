@@ -29,6 +29,7 @@ export type StudioState =
       status: "ready";
       upload: StudioUpload;
       selectedId: AnimationPatternId;
+      selections: number;
       error: string | null;
       advice: AdviceState;
     };
@@ -52,6 +53,7 @@ export function studioReducer(
         status: "ready",
         upload: action.upload,
         selectedId: action.upload.suggestions[0].patternId,
+        selections: 0,
         error: null,
         advice: { status: "loading" },
       };
@@ -61,7 +63,11 @@ export function studioReducer(
         : { status: "error", message: action.message };
     case "selected":
       return state.status === "ready"
-        ? { ...state, selectedId: action.patternId }
+        ? {
+            ...state,
+            selectedId: action.patternId,
+            selections: state.selections + 1,
+          }
         : state;
     case "advised":
       return state.status === "ready" && state.upload.markup === action.markup
