@@ -12,6 +12,7 @@
     "check-registry": "tsx scripts/check-registry.ts",
     "check-style": "tsx scripts/check-icon-style.ts",
     "check-style:fix": "tsx scripts/check-icon-style.ts --fix",
+    "check-suggest-animation": "tsx scripts/check-suggest-animation.ts",
     "check-svg-analyze": "tsx scripts/check-svg-analyze.ts",
     "dev": "next dev",
     "gen-cli": "tsx scripts/gen-cli.ts",
