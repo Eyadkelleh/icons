@@ -1,22 +1,27 @@
 "use client";
 
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
+import type { StudioOption } from "@/components/studio/advised-options";
 import type { AnimationPatternId } from "@/lib/animation-patterns";
-import {
-  type AnimationSuggestion,
-  patternTitle,
-} from "@/lib/suggest-animation";
+import { patternTitle } from "@/lib/suggest-animation";
 import { cn } from "@/lib/utils";
 
 type OptionListProps = {
-  suggestions: AnimationSuggestion[];
+  options: StudioOption[];
   selectedId: AnimationPatternId;
   onSelect: (patternId: AnimationPatternId) => void;
 };
 
+const rankLabel = (option: StudioOption, index: number) => {
+  if (option.cursorRank === 1) {
+    return "advised";
+  }
+  return index === 0 ? "best fit" : `#${index + 1}`;
+};
+
 export const OptionList = ({
-  suggestions,
+  options,
   selectedId,
   onSelect,
 }: OptionListProps) => (
@@ -26,8 +31,8 @@ export const OptionList = ({
     data-testid="studio-options"
     role="radiogroup"
   >
-    {suggestions.map((suggestion, index) => {
-      const selected = suggestion.patternId === selectedId;
+    {options.map((option, index) => {
+      const selected = option.patternId === selectedId;
       return (
         <motion.button
           animate={{ opacity: 1, y: 0 }}
@@ -38,26 +43,44 @@ export const OptionList = ({
               ? "border-primary"
               : "border-transparent hover:border-neutral-300 dark:hover:border-neutral-700"
           )}
-          data-pattern={suggestion.patternId}
+          data-pattern={option.patternId}
           data-testid="studio-option"
           initial={{ opacity: 0, y: 6 }}
-          key={suggestion.patternId}
-          onClick={() => onSelect(suggestion.patternId)}
+          key={option.patternId}
+          layout="position"
+          onClick={() => onSelect(option.patternId)}
           role="radio"
           transition={{ delay: index * 0.05, duration: 0.2 }}
           type="button"
         >
           <span className="flex items-baseline justify-between gap-3">
             <span className="font-sans text-base">
-              {patternTitle(suggestion.patternId)}
+              {patternTitle(option.patternId)}
             </span>
-            <span className="font-mono text-secondary text-xs">
-              {index === 0 ? "best fit" : `#${index + 1}`}
+            <span
+              className={cn(
+                "font-mono text-xs",
+                option.cursorRank === 1 ? "text-primary" : "text-secondary"
+              )}
+            >
+              {rankLabel(option, index)}
             </span>
           </span>
           <span className="font-mono text-secondary text-xs leading-relaxed">
-            {suggestion.rationale}
+            {option.rationale}
           </span>
+          <AnimatePresence initial={false}>
+            {option.advice && (
+              <motion.span
+                animate={{ opacity: 1, height: "auto" }}
+                className="overflow-hidden font-mono text-foreground text-xs leading-relaxed"
+                data-testid="studio-advice"
+                initial={{ opacity: 0, height: 0 }}
+              >
+                Advises: {option.advice}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </motion.button>
       );
     })}
