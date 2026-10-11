@@ -1,0 +1,74 @@
+{
+  "arrow.svg": {
+    "counts": {
+      "path": 2,
+      "group": 0,
+      "circle": 0,
+      "rect": 0,
+      "line": 0
+    },
+    "shapeGuesses": ["arrow"],
+    "complexity": 12,
+    "ambiguity": 20
+  },
+  "bars.svg": {
+    "counts": {
+      "path": 0,
+      "group": 0,
+      "circle": 0,
+      "rect": 3,
+      "line": 0
+    },
+    "shapeGuesses": ["bars"],
+    "complexity": 18,
+    "ambiguity": 20
+  },
+  "dense.svg": {
+    "counts": {
+      "path": 6,
+      "group": 3,
+      "circle": 2,
+      "rect": 1,
+      "line": 0
+    },
+    "shapeGuesses": ["layers"],
+    "complexity": 90,
+    "ambiguity": 20
+  },
+  "face.svg": {
+    "counts": {
+      "path": 1,
+      "group": 0,
+      "circle": 1,
+      "rect": 0,
+      "line": 2
+    },
+    "shapeGuesses": ["face"],
+    "complexity": 24,
+    "ambiguity": 20
+  },
+  "lock.svg": {
+    "counts": {
+      "path": 1,
+      "group": 0,
+      "circle": 0,
+      "rect": 1,
+      "line": 0
+    },
+    "shapeGuesses": ["lock"],
+    "complexity": 12,
+    "ambiguity": 20
+  },
+  "rays.svg": {
+    "counts": {
+      "path": 0,
+      "group": 0,
+      "circle": 1,
+      "rect": 0,
+      "line": 8
+    },
+    "shapeGuesses": ["rays"],
+    "complexity": 54,
+    "ambiguity": 20
+  }
+}
