@@ -6,13 +6,13 @@ import { AdviceStatus } from "@/components/studio/advice-status";
 import { mergeAdvice } from "@/components/studio/advised-options";
 import { Dropzone, isSvgFile } from "@/components/studio/dropzone";
 import { OptionList } from "@/components/studio/option-list";
+import { Preview } from "@/components/studio/preview";
 import {
   type AdviceState,
   INITIAL_STUDIO_STATE,
   readUpload,
   studioReducer,
 } from "@/components/studio/studio-state";
-import { SvgFigure } from "@/components/studio/svg-figure";
 import type { SuggestAdvice } from "@/lib/cursor-suggest";
 
 async function requestAdvice(markup: string): Promise<AdviceState> {
@@ -100,7 +100,11 @@ export const Studio = () => {
               className="supports-[corner-shape:squircle]:corner-squircle flex aspect-square w-full items-center justify-center rounded-[20px] bg-white text-foreground supports-[corner-shape:squircle]:rounded-[30px] dark:bg-[#0A0A0A]"
               data-testid="studio-preview"
             >
-              <SvgFigure size={160} tree={state.upload.tree} />
+              <Preview
+                patternId={state.selectedId}
+                selection={state.selections}
+                tree={state.upload.tree}
+              />
             </div>
             <div
               className="flex flex-col gap-1 font-mono text-xs"
