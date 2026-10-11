@@ -67,6 +67,45 @@ const LABELS: Record<string, AnimationPatternId[]> = {
   angry: ["face-morph"],
 };
 
+/** Labeled after the analyzer was built; never tune against these. */
+const BLIND: Record<string, AnimationPatternId[]> = {
+  "arrow-left": ["directional-nudge", "path-morph"],
+  "arrow-big-up": ["directional-nudge", "path-morph", "scale-pulse"],
+  "chevron-down": ["directional-nudge"],
+  "cloud-download": ["directional-nudge"],
+  "log-in": ["directional-nudge"],
+  import: ["directional-nudge"],
+  "arrow-up-from-line": ["directional-nudge"],
+  "maximize-2": ["corner-explode"],
+  "minimize-2": ["corner-explode"],
+  shrink: ["corner-explode"],
+  "scan-line": ["corner-explode"],
+  "clock-3": ["pivot-rotate"],
+  "clock-9": ["pivot-rotate"],
+  watch: ["pivot-rotate"],
+  "battery-low": ["fill-grow"],
+  "chart-no-axes-column": ["fill-grow", "stagger-fade"],
+  "signal-high": ["stagger-fade", "fill-grow"],
+  "wifi-high": ["stagger-fade"],
+  "sun-medium": ["stagger-fade"],
+  loader: ["stagger-fade", "pivot-rotate"],
+  "volume-1": ["stagger-fade"],
+  "square-check": ["semantic-path-length"],
+  "circle-check-big": ["semantic-path-length"],
+  "lock-keyhole": ["semantic-path-length"],
+  "zoom-out": ["search-bounce"],
+  "search-check": ["search-bounce", "semantic-path-length"],
+  annoyed: ["face-morph"],
+  "smile-plus": ["face-morph"],
+  "bell-dot": ["rotate-wiggle"],
+  "bell-plus": ["rotate-wiggle"],
+  files: ["peel-layers"],
+  "copy-plus": ["peel-layers"],
+  "heart-pulse": ["scale-pulse"],
+  diamond: ["scale-pulse", "rotate-wiggle"],
+  sparkle: ["scale-pulse", "rotate-wiggle"],
+};
+
 const ICONS_DIR = path.join(
   process.cwd(),
   "node_modules",
@@ -109,6 +148,14 @@ async function loadMarkup(name: string): Promise<string> {
 const DEV_SET = new Set(ANIMATION_PATTERNS.flatMap((p) => p.exampleIcons));
 
 type Tally = { icons: number; top1: number; top3: number };
+type Tallies = Record<"dev" | "holdout" | "blind", Tally>;
+
+function tallyFor(tallies: Tallies, name: string): Tally {
+  if (name in BLIND) {
+    return tallies.blind;
+  }
+  return DEV_SET.has(name) ? tallies.dev : tallies.holdout;
+}
 
 const pct = (n: number, d: number) => `${((100 * n) / d).toFixed(0)}%`;
 const line = (label: string, t: Tally) =>
@@ -143,21 +190,23 @@ async function main() {
   const tallies = {
     dev: { icons: 0, top1: 0, top3: 0 },
     holdout: { icons: 0, top1: 0, top3: 0 },
+    blind: { icons: 0, top1: 0, top3: 0 },
   };
 
-  const names = Object.keys(LABELS);
+  const labels = { ...LABELS, ...BLIND };
+  const names = Object.keys(labels);
   const markups = await Promise.all(names.map(loadMarkup));
   let slowest = 0;
 
   for (const [index, name] of names.entries()) {
-    const accepted = LABELS[name];
+    const accepted = labels[name];
     const started = performance.now();
     const reading = readIcon(markups[index]);
     slowest = Math.max(slowest, performance.now() - started);
     const ids = reading.ranking.slice(0, 3);
     const hit1 = accepted.includes(ids[0]);
     const hit3 = ids.some((id) => accepted.includes(id));
-    const tally = DEV_SET.has(name) ? tallies.dev : tallies.holdout;
+    const tally = tallyFor(tallies, name);
     tally.icons += 1;
     tally.top1 += Number(hit1);
     tally.top3 += Number(hit3);
@@ -173,6 +222,7 @@ async function main() {
 
   console.log(line("dev", tallies.dev));
   console.log(line("holdout", tallies.holdout));
+  console.log(line("blind", tallies.blind));
   console.log(`slowest_ms=${slowest.toFixed(2)}`);
 }
 
