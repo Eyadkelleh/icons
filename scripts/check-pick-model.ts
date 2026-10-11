@@ -1,9 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
-
+import { readIcon } from "../lib/icon-reading";
 import { type CatalogModel, pickSuggestModel } from "../lib/pick-suggest-model";
-import { suggestAnimations, suggestionSpread } from "../lib/suggest-animation";
-import { analyzeSvg } from "../lib/svg-analyze";
 
 const fixturesDir = path.join(process.cwd(), "lib", "svg-analyze.fixtures");
 
@@ -26,14 +24,8 @@ const CATALOG_NO_ROUTER: CatalogModel[] = [
 ];
 
 const pick = (file: string, catalog: CatalogModel[] | null) => {
-  const analysis = analyzeSvg(
-    readFileSync(path.join(fixturesDir, file), "utf8")
-  );
-  return pickSuggestModel(
-    analysis,
-    suggestionSpread(suggestAnimations(analysis)),
-    catalog
-  );
+  const reading = readIcon(readFileSync(path.join(fixturesDir, file), "utf8"));
+  return pickSuggestModel(reading, catalog);
 };
 
 let ok = true;
@@ -47,12 +39,12 @@ for (const [name, catalog] of [
   ["no-router", CATALOG_NO_ROUTER],
   ["no-catalog", null],
 ] as const) {
-  const arrow = pick("arrow.svg", catalog);
+  const face = pick("face.svg", catalog);
   const dense = pick("dense.svg", catalog);
   check(
-    `${name}: arrow and dense pick different models`,
-    arrow.selection.id !== dense.selection.id,
-    `arrow=${arrow.tier}:${arrow.selection.id} dense=${dense.tier}:${dense.selection.id}`
+    `${name}: face and dense pick different models`,
+    face.selection.id !== dense.selection.id,
+    `face=${face.tier}:${face.selection.id} dense=${dense.tier}:${dense.selection.id}`
   );
 }
 

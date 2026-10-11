@@ -6,8 +6,7 @@ import {
   ANIMATION_PATTERNS,
   type AnimationPatternId,
 } from "../lib/animation-patterns";
-import { suggestAnimations } from "../lib/suggest-animation";
-import { analyzeSvg } from "../lib/svg-analyze";
+import { readIcon } from "../lib/icon-reading";
 
 type IconNode = [string, Record<string, string>][];
 
@@ -127,8 +126,7 @@ async function main() {
 
   for (const [index, name] of names.entries()) {
     const accepted = LABELS[name];
-    const ranked = suggestAnimations(analyzeSvg(markups[index]), 3);
-    const ids = ranked.map((s) => s.patternId);
+    const ids = readIcon(markups[index]).ranking.slice(0, 3);
     const hit1 = accepted.includes(ids[0]);
     const hit3 = ids.some((id) => accepted.includes(id));
     const tally = DEV_SET.has(name) ? tallies.dev : tallies.holdout;

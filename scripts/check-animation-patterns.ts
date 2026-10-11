@@ -14,6 +14,11 @@ for (const pattern of ANIMATION_PATTERNS) {
   }
   ids.add(pattern.id);
 
+  if (!(pattern.title && pattern.when && pattern.avoid)) {
+    console.error(`${pattern.id}: missing copy`);
+    ok = false;
+  }
+
   if (!pattern.exampleIcons.length) {
     console.error(`${pattern.id}: missing exampleIcons`);
     ok = false;
@@ -26,17 +31,10 @@ for (const pattern of ANIMATION_PATTERNS) {
       ok = false;
     }
   }
-
-  if (!(pattern.variants.normal && pattern.variants.animate)) {
-    console.error(`${pattern.id}: variants must define normal and animate`);
-    ok = false;
-  }
 }
 
-if (ANIMATION_PATTERNS.length < 10) {
-  console.error(
-    `expected at least 10 patterns, got ${ANIMATION_PATTERNS.length}`
-  );
+if (ANIMATION_PATTERNS.length !== 12) {
+  console.error(`expected 12 patterns, got ${ANIMATION_PATTERNS.length}`);
   ok = false;
 }
 

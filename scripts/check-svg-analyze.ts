@@ -1,7 +1,8 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { analyzeSvg } from "../lib/svg-analyze";
+import { IconReadError, measureFrame, readIcon } from "../lib/icon-reading";
+import { boundKeys, detectFeatures } from "../lib/icon-reading/features";
 
 const fixturesDir = path.join(process.cwd(), "lib", "svg-analyze.fixtures");
 const snapshotPath = path.join(fixturesDir, "snapshots.json");
@@ -15,21 +16,19 @@ for (const file of readdirSync(fixturesDir)
   .sort()) {
   const markup = readFileSync(path.join(fixturesDir, file), "utf8");
   const start = performance.now();
-  const analysis = analyzeSvg(markup);
+  const reading = readIcon(markup);
   slowest = Math.max(slowest, performance.now() - start);
   fingerprints[file] = {
-    counts: analysis.counts,
-    shapeGuesses: analysis.shapeGuesses,
-    complexity: analysis.complexity,
-    ambiguity: analysis.ambiguity,
+    features: boundKeys(detectFeatures(measureFrame(reading.tree))),
+    ranking: reading.ranking.slice(0, 3),
   };
 }
 
 let rejected = false;
 try {
-  analyzeSvg("<div>not svg</div>");
-} catch {
-  rejected = true;
+  readIcon("<div>not svg</div>");
+} catch (error) {
+  rejected = error instanceof IconReadError;
 }
 
 if (update) {

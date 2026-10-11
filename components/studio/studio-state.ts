@@ -1,20 +1,16 @@
-import { parseSvgTree, type SvgNode } from "@/components/studio/svg-tree";
 import type { AnimationPatternId } from "@/lib/animation-patterns";
 import type { SuggestAdvice } from "@/lib/cursor-suggest";
 import {
-  type AnimationSuggestion,
-  suggestAnimations,
-} from "@/lib/suggest-animation";
-import { analyzeSvg, type SvgAnalysis } from "@/lib/svg-analyze";
-
-export const MAX_SVG_BYTES = 200_000;
+  IconReadError,
+  type IconReading,
+  MAX_SVG_BYTES,
+  readIcon,
+} from "@/lib/icon-reading";
 
 export type StudioUpload = {
   fileName: string;
   markup: string;
-  tree: SvgNode;
-  analysis: SvgAnalysis;
-  suggestions: AnimationSuggestion[];
+  reading: IconReading;
 };
 
 export type AdviceState =
@@ -52,7 +48,7 @@ export function studioReducer(
       return {
         status: "ready",
         upload: action.upload,
-        selectedId: action.upload.suggestions[0].patternId,
+        selectedId: action.upload.reading.ranking[0],
         selections: 0,
         error: null,
         advice: { status: "loading" },
@@ -84,8 +80,12 @@ export function readUpload(markup: string, fileName: string): StudioUpload {
   if (markup.length > MAX_SVG_BYTES) {
     throw new Error("That SVG is larger than 200 KB. Try a simpler icon.");
   }
-  const tree = parseSvgTree(markup);
-  const analysis = analyzeSvg(markup);
-  const suggestions = suggestAnimations(analysis, 5);
-  return { fileName, markup, tree, analysis, suggestions };
+  try {
+    return { fileName, markup, reading: readIcon(markup) };
+  } catch (error) {
+    if (error instanceof IconReadError) {
+      throw new Error(error.message, { cause: error });
+    }
+    throw error;
+  }
 }

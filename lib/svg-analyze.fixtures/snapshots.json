@@ -1,74 +1,42 @@
 {
   "arrow.svg": {
-    "counts": {
-      "path": 2,
-      "group": 0,
-      "circle": 0,
-      "rect": 0,
-      "line": 0
+    "features": {
+      "arrows": ["1", "0"]
     },
-    "shapeGuesses": ["arrow"],
-    "complexity": 12,
-    "ambiguity": 20
+    "ranking": ["directional-nudge", "path-morph", "rotate-wiggle"]
   },
   "bars.svg": {
-    "counts": {
-      "path": 0,
-      "group": 0,
-      "circle": 0,
-      "rect": 3,
-      "line": 0
+    "features": {
+      "bars": ["0", "1", "2"],
+      "stack": ["0", "1"]
     },
-    "shapeGuesses": ["bars"],
-    "complexity": 18,
-    "ambiguity": 20
+    "ranking": ["peel-layers", "stagger-fade", "fill-grow"]
   },
   "dense.svg": {
-    "counts": {
-      "path": 6,
-      "group": 3,
-      "circle": 2,
-      "rect": 1,
-      "line": 0
+    "features": {
+      "bars": ["1-0", "1-1"]
     },
-    "shapeGuesses": ["layers"],
-    "complexity": 90,
-    "ambiguity": 20
+    "ranking": ["stagger-fade", "rotate-wiggle", "directional-nudge"]
   },
   "face.svg": {
-    "counts": {
-      "path": 1,
-      "group": 0,
-      "circle": 1,
-      "rect": 0,
-      "line": 2
+    "features": {
+      "face": ["0", "2", "3", "1"],
+      "silhouette": ["0"]
     },
-    "shapeGuesses": ["face"],
-    "complexity": 24,
-    "ambiguity": 20
+    "ranking": ["face-morph", "rotate-wiggle", "scale-pulse"]
   },
   "lock.svg": {
-    "counts": {
-      "path": 1,
-      "group": 0,
-      "circle": 0,
-      "rect": 1,
-      "line": 0
+    "features": {
+      "shackle": ["0", "1"],
+      "silhouette": ["0"]
     },
-    "shapeGuesses": ["lock"],
-    "complexity": 12,
-    "ambiguity": 20
+    "ranking": ["semantic-path-length", "scale-pulse", "rotate-wiggle"]
   },
   "rays.svg": {
-    "counts": {
-      "path": 0,
-      "group": 0,
-      "circle": 1,
-      "rect": 0,
-      "line": 8
+    "features": {
+      "radial": ["1", "8", "6", "4", "2", "7", "5", "3", "0"],
+      "bars": ["1", "2"]
     },
-    "shapeGuesses": ["rays"],
-    "complexity": 54,
-    "ambiguity": 20
+    "ranking": ["stagger-fade", "pivot-rotate", "rotate-wiggle"]
   }
 }

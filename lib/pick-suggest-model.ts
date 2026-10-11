@@ -1,4 +1,4 @@
-import type { SvgAnalysis } from "@/lib/svg-analyze";
+import type { IconReading } from "@/lib/icon-reading";
 
 export type ModelTier = "fast" | "balanced" | "strong";
 
@@ -33,28 +33,30 @@ const ROUTER_MODE: Record<ModelTier, string[]> = {
   strong: ["intelligence", "balanced"],
 };
 
-export function tierFor(
-  analysis: SvgAnalysis,
-  spread: number
-): {
+export function tierFor(reading: IconReading): {
   tier: ModelTier;
   reason: string;
 } {
-  if (analysis.complexity >= 70 || analysis.ambiguity >= 60 || spread <= 1) {
+  const top = reading.castings[reading.ranking[0]];
+  const second = reading.castings[reading.ranking[1]];
+  const margin = top.fit - second.fit;
+  const positive = top.evidence.find((item) => item.weight > 0);
+  const says = positive?.says ?? top.evidence[0]?.says ?? "";
+  if (top.fit < 4 || margin <= 1) {
     return {
       tier: "strong",
-      reason: `complex or ambiguous upload (complexity ${analysis.complexity}, ambiguity ${analysis.ambiguity}, top-two gap ${spread})`,
+      reason: `no clear structural match (top fit ${top.fit}, margin ${margin}${says ? `; ${says}` : ""})`,
     };
   }
-  if (analysis.complexity < 40 && spread >= 3) {
+  if (top.fit >= 6 && margin >= 3) {
     return {
       tier: "fast",
-      reason: `simple upload with a clear heuristic winner (complexity ${analysis.complexity}, top-two gap ${spread})`,
+      reason: `clear winner (fit ${top.fit}, margin ${margin}${says ? `; ${says}` : ""})`,
     };
   }
   return {
     tier: "balanced",
-    reason: `moderate upload (complexity ${analysis.complexity}, top-two gap ${spread})`,
+    reason: `moderate match (fit ${top.fit}, margin ${margin}${says ? `; ${says}` : ""})`,
   };
 }
 
@@ -97,11 +99,10 @@ function selectFromCatalog(
 }
 
 export function pickSuggestModel(
-  analysis: SvgAnalysis,
-  spread: number,
+  reading: IconReading,
   catalog: CatalogModel[] | null
 ): PickedModel {
-  const { tier, reason } = tierFor(analysis, spread);
+  const { tier, reason } = tierFor(reading);
   const selection = (catalog && selectFromCatalog(tier, catalog)) ?? {
     id: DEFAULT_WITHOUT_CATALOG[tier],
   };

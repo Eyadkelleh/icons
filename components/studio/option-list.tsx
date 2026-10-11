@@ -3,8 +3,10 @@
 import { AnimatePresence, motion } from "motion/react";
 
 import type { StudioOption } from "@/components/studio/advised-options";
-import type { AnimationPatternId } from "@/lib/animation-patterns";
-import { patternTitle } from "@/lib/suggest-animation";
+import {
+  type AnimationPatternId,
+  patternTitle,
+} from "@/lib/animation-patterns";
 import { cn } from "@/lib/utils";
 
 type OptionListProps = {
