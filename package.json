@@ -16,6 +16,7 @@
     "check-suggest-animation": "tsx scripts/check-suggest-animation.ts",
     "check-svg-analyze": "tsx scripts/check-svg-analyze.ts",
     "dev": "next dev",
+    "eval-analysis": "tsx scripts/eval-analysis.ts",
     "gen-cli": "tsx scripts/gen-cli.ts",
     "gen-cli:check": "tsx scripts/gen-cli.ts --check",
     "lint": "pnpm run check-style:fix && npx ultracite fix",
