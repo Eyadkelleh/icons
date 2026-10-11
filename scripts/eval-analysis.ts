@@ -6,7 +6,7 @@ import {
   ANIMATION_PATTERNS,
   type AnimationPatternId,
 } from "../lib/animation-patterns";
-import { readIcon } from "../lib/icon-reading";
+import { type Casting, readIcon } from "../lib/icon-reading";
 
 type IconNode = [string, Record<string, string>][];
 
@@ -114,8 +114,32 @@ const pct = (n: number, d: number) => `${((100 * n) / d).toFixed(0)}%`;
 const line = (label: string, t: Tally) =>
   `${label.padEnd(8)} icons=${t.icons} top1=${t.top1} (${pct(t.top1, t.icons)}) top3=${t.top3} (${pct(t.top3, t.icons)})`;
 
+function printPlan(name: string, casting: Casting) {
+  const tracks = [...casting.plan.tracks.entries()].map(([key, track]) => ({
+    key,
+    frames: track.frames,
+    origin: track.origin,
+    delay: track.delay,
+    feel: track.feel,
+  }));
+  console.log(
+    JSON.stringify(
+      {
+        name,
+        patternId: casting.patternId,
+        fit: casting.fit,
+        order: casting.plan.order ?? null,
+        tracks,
+      },
+      null,
+      2
+    )
+  );
+}
+
 async function main() {
   const verbose = process.argv.includes("--verbose");
+  const plans = process.argv.includes("--plans");
   const tallies = {
     dev: { icons: 0, top1: 0, top3: 0 },
     holdout: { icons: 0, top1: 0, top3: 0 },
@@ -123,10 +147,14 @@ async function main() {
 
   const names = Object.keys(LABELS);
   const markups = await Promise.all(names.map(loadMarkup));
+  let slowest = 0;
 
   for (const [index, name] of names.entries()) {
     const accepted = LABELS[name];
-    const ids = readIcon(markups[index]).ranking.slice(0, 3);
+    const started = performance.now();
+    const reading = readIcon(markups[index]);
+    slowest = Math.max(slowest, performance.now() - started);
+    const ids = reading.ranking.slice(0, 3);
     const hit1 = accepted.includes(ids[0]);
     const hit3 = ids.some((id) => accepted.includes(id));
     const tally = DEV_SET.has(name) ? tallies.dev : tallies.holdout;
@@ -138,10 +166,14 @@ async function main() {
         `${hit1 ? "TOP1" : hit3 ? "TOP3" : "MISS"} ${name.padEnd(20)} want=${accepted[0].padEnd(22)} got=${ids.join(",")}`
       );
     }
+    if (plans) {
+      printPlan(name, reading.castings[ids[0]]);
+    }
   }
 
   console.log(line("dev", tallies.dev));
   console.log(line("holdout", tallies.holdout));
+  console.log(`slowest_ms=${slowest.toFixed(2)}`);
 }
 
 main();
