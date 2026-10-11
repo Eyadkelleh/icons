@@ -2,15 +2,37 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useReducer } from "react";
-
+import { AdviceStatus } from "@/components/studio/advice-status";
+import { mergeAdvice } from "@/components/studio/advised-options";
 import { Dropzone, isSvgFile } from "@/components/studio/dropzone";
 import { OptionList } from "@/components/studio/option-list";
 import {
+  type AdviceState,
   INITIAL_STUDIO_STATE,
   readUpload,
   studioReducer,
 } from "@/components/studio/studio-state";
 import { SvgFigure } from "@/components/studio/svg-figure";
+import type { SuggestAdvice } from "@/lib/cursor-suggest";
+
+async function requestAdvice(markup: string): Promise<AdviceState> {
+  try {
+    const response = await fetch("/api/suggest-animation", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ markup }),
+    });
+    if (!response.ok) {
+      return {
+        status: "failed",
+        message: `Advice request failed (${response.status}).`,
+      };
+    }
+    return { status: "done", advice: (await response.json()) as SuggestAdvice };
+  } catch {
+    return { status: "failed", message: "Advice request failed." };
+  }
+}
 
 export const Studio = () => {
   const [state, dispatch] = useReducer(studioReducer, INITIAL_STUDIO_STATE);
@@ -23,7 +45,11 @@ export const Studio = () => {
         type: "failed",
         message: error instanceof Error ? error.message : "Could not read SVG.",
       });
+      return;
     }
+    requestAdvice(markup).then((advice) =>
+      dispatch({ type: "advised", markup, advice })
+    );
   };
 
   const handleFile = async (file: File) => {
@@ -96,9 +122,16 @@ export const Studio = () => {
               onSelect={(patternId) =>
                 dispatch({ type: "selected", patternId })
               }
+              options={mergeAdvice(
+                state.upload.suggestions,
+                state.advice.status === "done" &&
+                  state.advice.advice.source === "cursor"
+                  ? state.advice.advice.options
+                  : null
+              )}
               selectedId={state.selectedId}
-              suggestions={state.upload.suggestions}
             />
+            <AdviceStatus advice={state.advice} />
           </div>
           <div className="min-[820px]:col-span-2">
             <Dropzone

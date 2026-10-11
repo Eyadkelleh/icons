@@ -1,5 +1,6 @@
 import { parseSvgTree, type SvgNode } from "@/components/studio/svg-tree";
 import type { AnimationPatternId } from "@/lib/animation-patterns";
+import type { SuggestAdvice } from "@/lib/cursor-suggest";
 import {
   type AnimationSuggestion,
   suggestAnimations,
@@ -16,6 +17,11 @@ export type StudioUpload = {
   suggestions: AnimationSuggestion[];
 };
 
+export type AdviceState =
+  | { status: "loading" }
+  | { status: "done"; advice: SuggestAdvice }
+  | { status: "failed"; message: string };
+
 export type StudioState =
   | { status: "empty" }
   | { status: "error"; message: string }
@@ -24,12 +30,14 @@ export type StudioState =
       upload: StudioUpload;
       selectedId: AnimationPatternId;
       error: string | null;
+      advice: AdviceState;
     };
 
 export type StudioAction =
   | { type: "loaded"; upload: StudioUpload }
   | { type: "failed"; message: string }
   | { type: "selected"; patternId: AnimationPatternId }
+  | { type: "advised"; markup: string; advice: AdviceState }
   | { type: "reset" };
 
 export const INITIAL_STUDIO_STATE: StudioState = { status: "empty" };
@@ -45,6 +53,7 @@ export function studioReducer(
         upload: action.upload,
         selectedId: action.upload.suggestions[0].patternId,
         error: null,
+        advice: { status: "loading" },
       };
     case "failed":
       return state.status === "ready"
@@ -53,6 +62,10 @@ export function studioReducer(
     case "selected":
       return state.status === "ready"
         ? { ...state, selectedId: action.patternId }
+        : state;
+    case "advised":
+      return state.status === "ready" && state.upload.markup === action.markup
+        ? { ...state, advice: action.advice }
         : state;
     case "reset":
       return INITIAL_STUDIO_STATE;
