@@ -6,6 +6,7 @@
     "prebuild": "node scripts/download-fonts.js",
     "build": "next build",
     "build-registry": "tsx scripts/registry-build.ts",
+    "check-animation-patterns": "tsx scripts/check-animation-patterns.ts",
     "check-duplicates": "tsx scripts/check-duplicates.ts",
     "check-imports": "tsx scripts/check-imports.ts",
     "check-registry": "tsx scripts/check-registry.ts",
