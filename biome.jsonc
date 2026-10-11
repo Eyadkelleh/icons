@@ -15,7 +15,18 @@
         // codebase does not follow; adopting them would be a wide rewrite of
         // working code for no functional gain.
         "noIncrementDecrement": "off",
-        "useDestructuring": "off"
+        "useDestructuring": "off",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": ["@/lib/icon-reading/*"],
+                "message": "Import from @/lib/icon-reading"
+              }
+            ]
+          }
+        }
       },
       "complexity": {
         "noForEach": "off"

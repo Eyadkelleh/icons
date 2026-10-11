@@ -101,9 +101,10 @@ export const Studio = () => {
               data-testid="studio-preview"
             >
               <Preview
+                casting={state.upload.reading.castings[state.selectedId]}
                 patternId={state.selectedId}
                 selection={state.selections}
-                tree={state.upload.tree}
+                tree={state.upload.reading.tree}
               />
             </div>
             <div
@@ -112,12 +113,23 @@ export const Studio = () => {
             >
               <span className="text-foreground">{state.upload.fileName}</span>
               <span className="text-secondary leading-relaxed">
-                {state.upload.analysis.summary}
+                {state.upload.reading.summary}
               </span>
-              <span className="text-secondary">
-                complexity {state.upload.analysis.complexity} / ambiguity{" "}
-                {state.upload.analysis.ambiguity}
-              </span>
+              {state.upload.reading.facts.map((fact) => (
+                <span className="text-secondary leading-relaxed" key={fact}>
+                  {fact}
+                </span>
+              ))}
+              {state.upload.reading.castings[state.selectedId].evidence.map(
+                (item) => (
+                  <span
+                    className="text-secondary leading-relaxed"
+                    key={`${item.stat}-${item.therefore}`}
+                  >
+                    {item.stat}, so {item.therefore}
+                  </span>
+                )
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-3">
@@ -127,7 +139,7 @@ export const Studio = () => {
                 dispatch({ type: "selected", patternId })
               }
               options={mergeAdvice(
-                state.upload.suggestions,
+                state.upload.reading,
                 state.advice.status === "done" &&
                   state.advice.advice.source === "cursor"
                   ? state.advice.advice.options

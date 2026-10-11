@@ -1,9 +1,6 @@
-import {
-  ANIMATION_PATTERN_BY_ID,
-  type AnimationPatternId,
-} from "@/lib/animation-patterns";
+import type { AnimationPatternId } from "@/lib/animation-patterns";
 import type { AdvisedOption } from "@/lib/cursor-suggest";
-import type { AnimationSuggestion } from "@/lib/suggest-animation";
+import type { IconReading } from "@/lib/icon-reading";
 
 export type StudioOption = {
   patternId: AnimationPatternId;
@@ -12,8 +9,19 @@ export type StudioOption = {
   cursorRank: number | null;
 };
 
+function rationaleFor(
+  reading: IconReading,
+  patternId: AnimationPatternId
+): string {
+  const casting = reading.castings[patternId];
+  const lines = casting.evidence
+    .filter((item) => item.weight > 0)
+    .map((item) => item.says);
+  return lines.length ? lines.join(" ") : (casting.evidence[0]?.says ?? "");
+}
+
 export function mergeAdvice(
-  suggestions: AnimationSuggestion[],
+  reading: IconReading,
   advised: AdvisedOption[] | null
 ): StudioOption[] {
   const byPattern = new Map(
@@ -22,18 +30,19 @@ export function mergeAdvice(
       { advice: option.advice, rank: index + 1 },
     ])
   );
-  const options: StudioOption[] = suggestions.map((s) => ({
-    patternId: s.patternId,
-    rationale: s.rationale,
-    advice: byPattern.get(s.patternId)?.advice ?? null,
-    cursorRank: byPattern.get(s.patternId)?.rank ?? null,
+  const top = reading.ranking.slice(0, 5);
+  const options: StudioOption[] = top.map((patternId) => ({
+    patternId,
+    rationale: rationaleFor(reading, patternId),
+    advice: byPattern.get(patternId)?.advice ?? null,
+    cursorRank: byPattern.get(patternId)?.rank ?? null,
   }));
   const shown = new Set(options.map((o) => o.patternId));
   for (const [patternId, { advice, rank }] of byPattern) {
     if (!shown.has(patternId)) {
       options.push({
         patternId,
-        rationale: ANIMATION_PATTERN_BY_ID[patternId].when,
+        rationale: rationaleFor(reading, patternId),
         advice,
         cursorRank: rank,
       });
