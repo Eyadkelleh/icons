@@ -11,6 +11,7 @@
     "check-icon-features": "tsx scripts/check-icon-features.ts",
     "check-icon-geometry": "tsx scripts/check-icon-geometry.ts",
     "check-imports": "tsx scripts/check-imports.ts",
+    "check-intent": "tsx scripts/check-intent.ts",
     "check-pick-model": "tsx scripts/check-pick-model.ts",
     "check-registry": "tsx scripts/check-registry.ts",
     "check-style": "tsx scripts/check-icon-style.ts",
