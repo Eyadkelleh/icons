@@ -1,5 +1,11 @@
+import { parseRefinedIntent, refineIntent } from "../lib/cursor-suggest";
 import { type Casting, type MotionPlan, readIcon } from "../lib/icon-reading";
-import { direct, EMPTY_INTENT, parseIntent } from "../lib/intent";
+import {
+  commitDescription,
+  direct,
+  EMPTY_INTENT,
+  parseIntent,
+} from "../lib/intent";
 
 const WRAP = (body: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${body}</svg>`;
@@ -47,57 +53,100 @@ function serializePlan(plan: MotionPlan) {
   };
 }
 
-const reading = readIcon(UP_ARROW);
-const identity = direct(reading, EMPTY_INTENT);
+async function main() {
+  const reading = readIcon(UP_ARROW);
+  const identity = direct(reading, EMPTY_INTENT);
 
-check(
-  "direct empty intent is the same reading",
-  identity === reading,
-  `sameRef=${identity === reading}`
-);
-check(
-  "identity keeps ranking",
-  identity.ranking.join() === reading.ranking.join(),
-  `got=${identity.ranking.join(",")}`
-);
-check(
-  "identity keeps plans",
-  reading.ranking.every(
-    (id) =>
-      JSON.stringify(serializePlan(identity.castings[id].plan)) ===
-      JSON.stringify(serializePlan(reading.castings[id].plan))
-  ),
-  "plans"
-);
+  check(
+    "direct empty intent is the same reading",
+    identity === reading,
+    `sameRef=${identity === reading}`
+  );
+  check(
+    "identity keeps ranking",
+    identity.ranking.join() === reading.ranking.join(),
+    `got=${identity.ranking.join(",")}`
+  );
+  check(
+    "identity keeps plans",
+    reading.ranking.every(
+      (id) =>
+        JSON.stringify(serializePlan(identity.castings[id].plan)) ===
+        JSON.stringify(serializePlan(reading.castings[id].plan))
+    ),
+    "plans"
+  );
 
-const headY = yOfHead(reading.castings["directional-nudge"]);
-const down = direct(reading, parseIntent("go down"));
-const downY = yOfHead(down.castings["directional-nudge"]);
-check(
-  "travel down flips an up arrow nudge to positive y",
-  typeof headY === "number" &&
-    typeof downY === "number" &&
-    headY < 0 &&
-    downY > 0,
-  `before=${headY} after=${downY}`
-);
+  const headY = yOfHead(reading.castings["directional-nudge"]);
+  const down = direct(reading, parseIntent("go down"));
+  const downY = yOfHead(down.castings["directional-nudge"]);
+  check(
+    "travel down flips an up arrow nudge to positive y",
+    typeof headY === "number" &&
+      typeof downY === "number" &&
+      headY < 0 &&
+      downY > 0,
+    `before=${headY} after=${downY}`
+  );
 
-const restPeak = rotatePeak(reading.castings["rotate-wiggle"]);
-const urgent = direct(reading, parseIntent("urgent"));
-const urgentPeak = rotatePeak(urgent.castings["rotate-wiggle"]);
-check(
-  "urgent scales wiggle amplitude up",
-  typeof restPeak === "number" &&
-    typeof urgentPeak === "number" &&
-    urgentPeak > restPeak,
-  `before=${restPeak} after=${urgentPeak}`
-);
+  const restPeak = rotatePeak(reading.castings["rotate-wiggle"]);
+  const urgent = direct(reading, parseIntent("urgent"));
+  const urgentPeak = rotatePeak(urgent.castings["rotate-wiggle"]);
+  check(
+    "urgent scales wiggle amplitude up",
+    typeof restPeak === "number" &&
+      typeof urgentPeak === "number" &&
+      urgentPeak > restPeak,
+    `before=${restPeak} after=${urgentPeak}`
+  );
 
-const looping = direct(reading, parseIntent("keep going"));
-check(
-  "loop description sets plan.repeat to loop",
-  looping.ranking.every((id) => looping.castings[id].plan.repeat === "loop"),
-  `repeat=${looping.castings[looping.ranking[0]].plan.repeat}`
-);
+  const looping = direct(reading, parseIntent("keep going"));
+  check(
+    "loop description sets plan.repeat to loop",
+    looping.ranking.every((id) => looping.castings[id].plan.repeat === "loop"),
+    `repeat=${looping.castings[looping.ranking[0]].plan.repeat}`
+  );
 
-process.exit(ok ? 0 : 1);
+  const lexicon = parseIntent("notifications");
+  check(
+    "refine parser rejects invalid JSON",
+    parseRefinedIntent("not json") === null,
+    "invalid"
+  );
+  check(
+    "refine parser rejects pattern ids",
+    parseRefinedIntent(
+      '{"cues":["ring"],"intensity":"normal","spans":[],"unmatched":"","patternId":"rotate-wiggle"}'
+    ) === null,
+    "patternId"
+  );
+  check(
+    "refine parser rejects options payload",
+    parseRefinedIntent(
+      '{"options":[{"patternId":"rotate-wiggle","advice":"ring it"}]}'
+    ) === null,
+    "options"
+  );
+  check(
+    "refine parser keeps a valid intent",
+    parseRefinedIntent(
+      '{"cues":["ring"],"intensity":"strong","spans":[{"phrase":"urgent","cue":"ring"}],"unmatched":""}'
+    )?.intensity === "strong",
+    "valid"
+  );
+
+  const refined = await refineIntent(
+    commitDescription("notifications"),
+    reading
+  );
+  check(
+    "refine without a key keeps the lexicon intent",
+    refined.source === "heuristic" &&
+      refined.intent.cues.join() === lexicon.cues.join(),
+    `source=${refined.source} cues=${refined.intent.cues.join(",")}`
+  );
+
+  process.exit(ok ? 0 : 1);
+}
+
+main();

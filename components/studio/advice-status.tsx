@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 
-import type { AdviceState } from "@/components/studio/studio-state";
+import type { RefineState } from "@/components/studio/studio-state";
 
 const TIER_LABEL = {
   fast: "fast model",
@@ -10,35 +10,35 @@ const TIER_LABEL = {
   strong: "strong model",
 } as const;
 
-function describe(advice: AdviceState): string {
-  if (advice.status === "loading") {
-    return "Asking Cursor which motion fits…";
+function describe(refine: RefineState): string {
+  if (refine.status === "loading") {
+    return "Asking Cursor to reread what you wrote…";
   }
-  if (advice.status === "failed") {
-    return `${advice.message} Showing heuristic ranks.`;
+  if (refine.status === "failed") {
+    return `${refine.message} Using the lexicon.`;
   }
-  const { advice: result } = advice;
-  if (result.source === "cursor") {
-    return `Advised by ${result.modelId} (${TIER_LABEL[result.tier]}: ${result.reason}) in ${(result.durationMs / 1000).toFixed(1)}s.`;
+  const { refined } = refine;
+  if (refined.source === "cursor") {
+    return `Reread by ${refined.modelId} (${TIER_LABEL[refined.tier]}: ${refined.reason}) in ${(refined.durationMs / 1000).toFixed(1)}s.`;
   }
-  return `${result.fallback} Model pick: ${result.modelId} (${TIER_LABEL[result.tier]}).`;
+  return `${refined.fallback} Model pick: ${refined.modelId} (${TIER_LABEL[refined.tier]}).`;
 }
 
-export const AdviceStatus = ({ advice }: { advice: AdviceState }) => (
+export const AdviceStatus = ({ refine }: { refine: RefineState }) => (
   <motion.p
-    animate={{ opacity: advice.status === "loading" ? [0.5, 1, 0.5] : 1 }}
+    animate={{ opacity: refine.status === "loading" ? [0.5, 1, 0.5] : 1 }}
     aria-live="polite"
     className="font-mono text-secondary text-xs leading-relaxed"
     data-source={
-      advice.status === "done" ? advice.advice.source : advice.status
+      refine.status === "done" ? refine.refined.source : refine.status
     }
     data-testid="studio-advice-status"
     transition={
-      advice.status === "loading"
+      refine.status === "loading"
         ? { duration: 1.6, repeat: Number.POSITIVE_INFINITY }
         : { duration: 0.2 }
     }
   >
-    {describe(advice)}
+    {describe(refine)}
   </motion.p>
 );

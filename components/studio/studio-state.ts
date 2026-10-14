@@ -1,5 +1,6 @@
+import type { StudioOption } from "@/components/studio/option-list";
 import type { AnimationPatternId } from "@/lib/animation-patterns";
-import type { SuggestAdvice } from "@/lib/cursor-suggest";
+import type { RefinedIntent } from "@/lib/cursor-suggest";
 import {
   IconReadError,
   type IconReading,
@@ -13,9 +14,9 @@ export type StudioUpload = {
   reading: IconReading;
 };
 
-export type AdviceState =
+export type RefineState =
   | { status: "loading" }
-  | { status: "done"; advice: SuggestAdvice }
+  | { status: "done"; refined: RefinedIntent }
   | { status: "failed"; message: string };
 
 export type StudioState =
@@ -27,14 +28,13 @@ export type StudioState =
       selectedId: AnimationPatternId;
       selections: number;
       error: string | null;
-      advice: AdviceState;
+      refine: RefineState | null;
     };
 
 export type StudioAction =
   | { type: "loaded"; upload: StudioUpload }
   | { type: "failed"; message: string }
   | { type: "selected"; patternId: AnimationPatternId }
-  | { type: "advised"; markup: string; advice: AdviceState }
   | { type: "reset" };
 
 export const INITIAL_STUDIO_STATE: StudioState = { status: "empty" };
@@ -51,7 +51,7 @@ export function studioReducer(
         selectedId: action.upload.reading.ranking[0],
         selections: 0,
         error: null,
-        advice: { status: "loading" },
+        refine: null,
       };
     case "failed":
       return state.status === "ready"
@@ -65,15 +65,26 @@ export function studioReducer(
             selections: state.selections + 1,
           }
         : state;
-    case "advised":
-      return state.status === "ready" && state.upload.markup === action.markup
-        ? { ...state, advice: action.advice }
-        : state;
     case "reset":
       return INITIAL_STUDIO_STATE;
     default:
       return state;
   }
+}
+
+export function optionsFrom(reading: IconReading): StudioOption[] {
+  return reading.ranking.slice(0, 5).map((patternId) => {
+    const casting = reading.castings[patternId];
+    const lines = casting.evidence
+      .filter((item) => item.weight > 0)
+      .map((item) => item.says);
+    return {
+      patternId,
+      rationale: lines.length
+        ? lines.join(" ")
+        : (casting.evidence[0]?.says ?? ""),
+    };
+  });
 }
 
 export function readUpload(markup: string, fileName: string): StudioUpload {
