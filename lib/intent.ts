@@ -454,7 +454,8 @@ function patchPlan(
   const travel =
     Boolean(intent.axis) &&
     (patternId === "directional-nudge" || patternId === "path-morph");
-  if (intent.intensity === "normal" && !travel) {
+  const repeat = intent.repeat ?? plan.repeat;
+  if (intent.intensity === "normal" && !travel && repeat === plan.repeat) {
     return plan;
   }
   const tracks = new Map();
@@ -465,7 +466,7 @@ function patchPlan(
     }
     tracks.set(target, { ...track, frames });
   }
-  return { ...plan, tracks };
+  return { ...plan, tracks, repeat };
 }
 
 type EvidenceDraft = Pick<Evidence, "weight" | "parts" | "stat" | "therefore">;

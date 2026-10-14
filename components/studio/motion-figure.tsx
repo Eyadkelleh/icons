@@ -46,7 +46,7 @@ function restPose(frames: Keyframes): Record<string, number> {
   return pose;
 }
 
-function trackProps(track: Track, duration: number) {
+function trackProps(track: Track, duration: number, loop: boolean) {
   return {
     "data-animated": "",
     variants: {
@@ -62,6 +62,7 @@ function trackProps(track: Track, duration: number) {
       ...FEEL[track.feel],
       duration,
       delay: track.delay,
+      ...(loop ? { repeat: Number.POSITIVE_INFINITY } : {}),
     },
   };
 }
@@ -90,7 +91,9 @@ export const MotionFigure = ({
         )
     );
     const wrap = Boolean(node.props.transform && usesTransform);
-    const motionProps = found ? trackProps(found, plan.duration) : undefined;
+    const motionProps = found
+      ? trackProps(found, plan.duration, plan.repeat === "loop")
+      : undefined;
     const children = node.children.map((child) => renderNode(child));
     const element = createElement(
       MOTION_TAGS[node.tag],
@@ -132,7 +135,9 @@ export const MotionFigure = ({
       motion.g,
       {
         key: "all",
-        ...(allTrack ? trackProps(allTrack, plan.duration) : {}),
+        ...(allTrack
+          ? trackProps(allTrack, plan.duration, plan.repeat === "loop")
+          : {}),
       },
       tree.children.map((child) => renderNode(child))
     )

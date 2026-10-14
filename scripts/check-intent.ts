@@ -35,13 +35,16 @@ function rotatePeak(casting: Casting): number | undefined {
 }
 
 function serializePlan(plan: MotionPlan) {
-  return [...plan.tracks.entries()].map(([key, track]) => ({
-    key,
-    frames: track.frames,
-    origin: track.origin,
-    delay: track.delay,
-    feel: track.feel,
-  }));
+  return {
+    repeat: plan.repeat,
+    tracks: [...plan.tracks.entries()].map(([key, track]) => ({
+      key,
+      frames: track.frames,
+      origin: track.origin,
+      delay: track.delay,
+      feel: track.feel,
+    })),
+  };
 }
 
 const reading = readIcon(UP_ARROW);
@@ -88,6 +91,13 @@ check(
     typeof urgentPeak === "number" &&
     urgentPeak > restPeak,
   `before=${restPeak} after=${urgentPeak}`
+);
+
+const looping = direct(reading, parseIntent("keep going"));
+check(
+  "loop description sets plan.repeat to loop",
+  looping.ranking.every((id) => looping.castings[id].plan.repeat === "loop"),
+  `repeat=${looping.castings[looping.ranking[0]].plan.repeat}`
 );
 
 process.exit(ok ? 0 : 1);

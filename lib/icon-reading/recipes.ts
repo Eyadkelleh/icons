@@ -59,6 +59,7 @@ export type MotionPlan = {
   readonly tracks: ReadonlyMap<TrackTarget, Track>;
   readonly duration: number;
   readonly order?: MotionOrder;
+  readonly repeat: "once" | "loop";
 };
 
 export type Evidence = {
@@ -111,7 +112,7 @@ function planOf(
   duration: number,
   order?: MotionOrder
 ): MotionPlan {
-  return { tracks: new Map(entries), duration, order };
+  return { tracks: new Map(entries), duration, order, repeat: "once" };
 }
 
 function whole(
