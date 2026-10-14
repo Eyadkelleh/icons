@@ -1,3 +1,8 @@
+import {
+  INITIAL_STUDIO_STATE,
+  readUpload,
+  studioReducer,
+} from "../components/studio/studio-state";
 import { parseRefinedIntent, refineIntent } from "../lib/cursor-suggest";
 import { type Casting, type MotionPlan, readIcon } from "../lib/icon-reading";
 import {
@@ -144,6 +149,49 @@ async function main() {
     refined.source === "heuristic" &&
       refined.intent.cues.join() === lexicon.cues.join(),
     `source=${refined.source} cues=${refined.intent.cues.join(",")}`
+  );
+
+  const upload = readUpload(UP_ARROW, "up.svg");
+  let studio = studioReducer(INITIAL_STUDIO_STATE, { type: "loaded", upload });
+  studio = studioReducer(studio, { type: "drafted", text: "go down" });
+  studio = studioReducer(studio, { type: "submitted" });
+  check(
+    "submit from describing plays",
+    studio.status === "playing" && studio.generationId === 1,
+    `status=${studio.status}`
+  );
+  const playing = studio;
+  const same = studioReducer(studio, { type: "submitted" });
+  check(
+    "identical resubmit does not change state",
+    same === playing ||
+      (same.status === "playing" &&
+        playing.status === "playing" &&
+        same.generationId === playing.generationId &&
+        same.description === playing.description &&
+        same.directed === playing.directed),
+    `gen=${same.status === "playing" ? same.generationId : same.status}`
+  );
+  const stale = studioReducer(studio, {
+    type: "refined",
+    generationId: playing.status === "playing" ? playing.generationId + 1 : 99,
+    refined: {
+      source: "heuristic",
+      modelId: "composer-2.5",
+      tier: "fast",
+      reason: "stub",
+      intent: parseIntent("urgent"),
+      fallback: "stub",
+    },
+  });
+  check(
+    "stale generation refinements are ignored",
+    stale === studio ||
+      (stale.status === "playing" &&
+        studio.status === "playing" &&
+        stale.directed === studio.directed &&
+        stale.refine.status === studio.refine.status),
+    `status=${stale.status}`
   );
 
   process.exit(ok ? 0 : 1);
