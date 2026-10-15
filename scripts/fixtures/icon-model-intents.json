@@ -1,0 +1,354 @@
+{
+  "bell": {
+    "a": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "bell-ring": {
+    "a": { "cues": ["ring"], "intensity": "strong", "spans": [], "unmatched": "" },
+    "b": { "cues": ["ring"], "intensity": "strong", "spans": [], "unmatched": "" }
+  },
+  "alarm-clock": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "plus": {
+    "a": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "cog": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "settings": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "heart": {
+    "a": { "cues": ["pulse"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "star": {
+    "a": { "cues": ["pulse"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "thumbs-up": {
+    "a": { "cues": ["pulse"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "upload": {
+    "a": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "download": {
+    "a": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "cloud-upload": {
+    "a": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-down-to-line": {
+    "a": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "log-out": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-up": {
+    "a": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-down": {
+    "a": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-right": {
+    "a": { "cues": ["travel"], "axis": "right", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "right", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "square-arrow-up": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "sun": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "wifi": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "grip": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "signal": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "volume-2": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "radio": {
+    "a": { "cues": [], "intensity": "normal", "repeat": "loop", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "repeat": "loop", "spans": [], "unmatched": "" }
+  },
+  "maximize": {
+    "a": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["explode"], "intensity": "strong", "spans": [], "unmatched": "" }
+  },
+  "expand": {
+    "a": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "minimize": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "scan": {
+    "a": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "fullscreen": {
+    "a": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "copy": {
+    "a": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "file-stack": {
+    "a": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "square-stack": {
+    "a": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "layers": {
+    "a": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "clock": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "history": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "timer": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "battery": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "battery-full": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "battery-medium": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "chart-column": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "chart-bar": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "check": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "check-check": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "circle-check": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "lock": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "lock-open": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "search": {
+    "a": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "zoom-in": {
+    "a": { "cues": ["search"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "smile": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "frown": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "laugh": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "meh": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "angry": {
+    "a": { "cues": ["face"], "intensity": "strong", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "strong", "spans": [], "unmatched": "" }
+  },
+  "arrow-left": {
+    "a": { "cues": ["travel"], "axis": "left", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "left", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-big-up": {
+    "a": { "cues": ["travel"], "axis": "up", "intensity": "strong", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "up", "intensity": "strong", "spans": [], "unmatched": "" }
+  },
+  "chevron-down": {
+    "a": { "cues": ["morph"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["morph"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "cloud-download": {
+    "a": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "down", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "log-in": {
+    "a": { "cues": ["travel"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "import": {
+    "a": { "cues": ["travel"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "in", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "arrow-up-from-line": {
+    "a": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["travel"], "axis": "up", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "maximize-2": {
+    "a": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["explode"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "minimize-2": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "shrink": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "scan-line": {
+    "a": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "clock-3": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "clock-9": {
+    "a": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "watch": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "battery-low": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "strong", "spans": [], "unmatched": "" }
+  },
+  "chart-no-axes-column": {
+    "a": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["grow"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "signal-high": {
+    "a": { "cues": ["stagger"], "intensity": "strong", "spans": [], "unmatched": "" },
+    "b": { "cues": ["stagger"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "wifi-high": {
+    "a": { "cues": ["stagger"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["stagger"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "sun-medium": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "loader": {
+    "a": { "cues": ["spin"], "intensity": "normal", "repeat": "loop", "spans": [], "unmatched": "" },
+    "b": { "cues": ["spin"], "intensity": "normal", "repeat": "loop", "spans": [], "unmatched": "" }
+  },
+  "volume-1": {
+    "a": { "cues": [], "intensity": "soft", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "soft", "spans": [], "unmatched": "" }
+  },
+  "square-check": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "circle-check-big": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "lock-keyhole": {
+    "a": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["draw"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "zoom-out": {
+    "a": { "cues": ["search"], "axis": "out", "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "axis": "out", "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "search-check": {
+    "a": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["search"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "annoyed": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "smile-plus": {
+    "a": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["face"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "bell-dot": {
+    "a": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "bell-plus": {
+    "a": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["ring"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "files": {
+    "a": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "copy-plus": {
+    "a": { "cues": ["peel", "ring"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["peel"], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "heart-pulse": {
+    "a": { "cues": ["pulse"], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": ["pulse"], "intensity": "normal", "repeat": "loop", "spans": [], "unmatched": "" }
+  },
+  "diamond": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  },
+  "sparkle": {
+    "a": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" },
+    "b": { "cues": [], "intensity": "normal", "spans": [], "unmatched": "" }
+  }
+}

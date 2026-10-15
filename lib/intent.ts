@@ -41,10 +41,14 @@ export type Intensity = (typeof INTENSITIES)[number];
 export const REPEAT_MODES = ["once", "loop"] as const;
 export type RepeatMode = (typeof REPEAT_MODES)[number];
 
+export const READERS = ["lexicon", "model"] as const;
+export type IntentReader = (typeof READERS)[number];
+
 export const CueSchema = z.enum(CUES);
 export const AxisSchema = z.enum(AXES);
 export const IntensitySchema = z.enum(INTENSITIES);
 export const RepeatModeSchema = z.enum(REPEAT_MODES);
+export const ReaderSchema = z.enum(READERS);
 
 export const SpanSchema = z.object({
   phrase: z.string().min(1).max(80),
@@ -53,7 +57,8 @@ export const SpanSchema = z.object({
 
 export type Span = z.infer<typeof SpanSchema>;
 
-export const IntentSchema = z.object({
+/** Body the Cursor agent may emit. `reader` is owned by the host, never the model. */
+export const IntentBodySchema = z.object({
   cues: z.array(CueSchema).max(4),
   axis: AxisSchema.optional(),
   intensity: IntensitySchema,
@@ -62,13 +67,23 @@ export const IntentSchema = z.object({
   unmatched: z.string().max(280),
 });
 
+export const IntentSchema = IntentBodySchema.extend({
+  reader: ReaderSchema,
+});
+
 export type Intent = z.infer<typeof IntentSchema>;
+
+export const CUE_WEIGHT = {
+  lexicon: 2,
+  model: 4,
+} as const satisfies Record<IntentReader, number>;
 
 export const EMPTY_INTENT: Intent = {
   cues: [],
   intensity: "normal",
   spans: [],
   unmatched: "",
+  reader: "lexicon",
 };
 
 declare const descriptionBrand: unique symbol;
@@ -87,7 +102,7 @@ export class DescriptionError extends Error {
   }
 }
 
-const CUE_PATTERN = {
+export const CUE_PATTERN = {
   ring: "rotate-wiggle",
   pulse: "scale-pulse",
   travel: "directional-nudge",
@@ -101,6 +116,15 @@ const CUE_PATTERN = {
   search: "search-bounce",
   face: "face-morph",
 } as const satisfies Record<Cue, AnimationPatternId>;
+
+export function cueGloss(cue: Cue): string {
+  const pattern = ANIMATION_PATTERNS.find((p) => p.id === CUE_PATTERN[cue]);
+  return pattern?.when ?? cue;
+}
+
+export function asModelIntent(body: z.infer<typeof IntentBodySchema>): Intent {
+  return { ...body, reader: "model" };
+}
 
 const CUE_THEREFORE: Record<Cue, string> = {
   ring: "it rings",
@@ -490,14 +514,14 @@ function evidenceFor(
   intent: Intent
 ): EvidenceDraft[] {
   const drafts: EvidenceDraft[] = [];
-  for (const cue of intent.cues) {
+  const base = CUE_WEIGHT[intent.reader];
+  for (const [index, cue] of intent.cues.entries()) {
     if (CUE_PATTERN[cue] !== patternId) {
       continue;
     }
     const span = intent.spans.find((item) => item.cue === cue)?.phrase ?? cue;
     drafts.push({
-      // Below a unique geometry claim (weight 3) so a 0-fit cue cannot tie and steal catalog order.
-      weight: 2,
+      weight: index === 0 ? base : Math.ceil(base / 2),
       parts: [],
       stat: `you said ${span}`,
       therefore: thereforeFor(cue, intent.axis),
@@ -556,6 +580,7 @@ function collectMatches(source: string): Intent {
     repeat,
     spans,
     unmatched: leftover(lower, used),
+    reader: "lexicon",
   };
 }
 

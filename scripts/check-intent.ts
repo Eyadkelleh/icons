@@ -3,10 +3,19 @@ import {
   readUpload,
   studioReducer,
 } from "../components/studio/studio-state";
-import { parseRefinedIntent, refineIntent } from "../lib/cursor-suggest";
+import {
+  buildRefinePrompt,
+  parseRefinedIntent,
+  refineIntent,
+} from "../lib/cursor-suggest";
 import { type Casting, type MotionPlan, readIcon } from "../lib/icon-reading";
 import {
+  asModelIntent,
+  CUE_PATTERN,
+  CUE_WEIGHT,
+  CUES,
   commitDescription,
+  cueGloss,
   direct,
   EMPTY_INTENT,
   parseIntent,
@@ -114,6 +123,51 @@ async function main() {
 
   const lexicon = parseIntent("notifications");
   check(
+    "lexicon reader weight is 2",
+    lexicon.reader === "lexicon" && CUE_WEIGHT.lexicon === 2,
+    `reader=${lexicon.reader} weight=${CUE_WEIGHT.lexicon}`
+  );
+  const lexiconDirected = direct(reading, lexicon);
+  const lexiconBoost =
+    lexiconDirected.castings[CUE_PATTERN.ring].fit -
+    reading.castings[CUE_PATTERN.ring].fit;
+  check(
+    "lexicon first cue adds +2",
+    lexicon.cues[0] === "ring" && lexiconBoost === 2,
+    `boost=${lexiconBoost}`
+  );
+
+  const model = asModelIntent({
+    cues: ["ring", "travel"],
+    intensity: "normal",
+    spans: [],
+    unmatched: "",
+  });
+  const modelDirected = direct(reading, model);
+  const modelRingBoost =
+    modelDirected.castings[CUE_PATTERN.ring].fit -
+    reading.castings[CUE_PATTERN.ring].fit;
+  const modelTravelBoost =
+    modelDirected.castings[CUE_PATTERN.travel].fit -
+    reading.castings[CUE_PATTERN.travel].fit;
+  check(
+    "model first cue adds +4",
+    model.reader === "model" && modelRingBoost === 4,
+    `boost=${modelRingBoost}`
+  );
+  check(
+    "model second cue adds +2",
+    modelTravelBoost === 2,
+    `boost=${modelTravelBoost}`
+  );
+
+  const prompt = buildRefinePrompt(commitDescription("notifications"));
+  check(
+    "refine prompt glosses every cue from the catalog",
+    CUES.every((cue) => prompt.includes(`${cue} :: ${cueGloss(cue)}`)),
+    "glosses"
+  );
+  check(
     "refine parser rejects invalid JSON",
     parseRefinedIntent("not json") === null,
     "invalid"
@@ -132,12 +186,13 @@ async function main() {
     ) === null,
     "options"
   );
+  const parsed = parseRefinedIntent(
+    '{"cues":["ring"],"intensity":"strong","spans":[{"phrase":"urgent","cue":"ring"}],"unmatched":"","reader":"lexicon"}'
+  );
   check(
-    "refine parser keeps a valid intent",
-    parseRefinedIntent(
-      '{"cues":["ring"],"intensity":"strong","spans":[{"phrase":"urgent","cue":"ring"}],"unmatched":""}'
-    )?.intensity === "strong",
-    "valid"
+    "refine parser tags model even when JSON claims lexicon",
+    parsed?.reader === "model" && parsed.intensity === "strong",
+    `reader=${parsed?.reader} intensity=${parsed?.intensity}`
   );
 
   const refined = await refineIntent(
