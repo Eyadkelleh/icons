@@ -91,7 +91,7 @@ export const Dropzone = ({
             onClick={() => onPaste(pasted)}
             type="button"
           >
-            Analyze markup
+            Use this markup
           </button>
         </div>
       </details>

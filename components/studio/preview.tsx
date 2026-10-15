@@ -18,7 +18,10 @@ type PatternPreviewProps = {
   patternId: AnimationPatternId;
 };
 
-type PreviewProps = PatternPreviewProps & { selection: number };
+type PreviewProps = PatternPreviewProps & {
+  selection: number;
+  generationId: number;
+};
 
 /**
  * Remount on every selection so leftover transforms never leak between
@@ -29,10 +32,11 @@ export const Preview = ({
   casting,
   patternId,
   selection,
+  generationId,
 }: PreviewProps) => (
   <PatternPreview
     casting={casting}
-    key={`${patternId}-${selection}`}
+    key={`${patternId}-${selection}-${generationId}`}
     patternId={patternId}
     tree={tree}
   />

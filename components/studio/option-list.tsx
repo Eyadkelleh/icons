@@ -1,25 +1,22 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
-import type { StudioOption } from "@/components/studio/advised-options";
 import {
   type AnimationPatternId,
   patternTitle,
 } from "@/lib/animation-patterns";
 import { cn } from "@/lib/utils";
 
+export type StudioOption = {
+  patternId: AnimationPatternId;
+  rationale: string;
+};
+
 type OptionListProps = {
   options: StudioOption[];
   selectedId: AnimationPatternId;
   onSelect: (patternId: AnimationPatternId) => void;
-};
-
-const rankLabel = (option: StudioOption, index: number) => {
-  if (option.cursorRank === 1) {
-    return "advised";
-  }
-  return index === 0 ? "best fit" : `#${index + 1}`;
 };
 
 export const OptionList = ({
@@ -59,30 +56,13 @@ export const OptionList = ({
             <span className="font-sans text-base">
               {patternTitle(option.patternId)}
             </span>
-            <span
-              className={cn(
-                "font-mono text-xs",
-                option.cursorRank === 1 ? "text-primary" : "text-secondary"
-              )}
-            >
-              {rankLabel(option, index)}
+            <span className="font-mono text-secondary text-xs">
+              {index === 0 ? "best fit" : `#${index + 1}`}
             </span>
           </span>
           <span className="font-mono text-secondary text-xs leading-relaxed">
             {option.rationale}
           </span>
-          <AnimatePresence initial={false}>
-            {option.advice && (
-              <motion.span
-                animate={{ opacity: 1, height: "auto" }}
-                className="overflow-hidden font-mono text-foreground text-xs leading-relaxed"
-                data-testid="studio-advice"
-                initial={{ opacity: 0, height: 0 }}
-              >
-                Advises: {option.advice}
-              </motion.span>
-            )}
-          </AnimatePresence>
         </motion.button>
       );
     })}

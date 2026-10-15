@@ -7,6 +7,13 @@ import {
   type AnimationPatternId,
 } from "../lib/animation-patterns";
 import { type Casting, readIcon } from "../lib/icon-reading";
+import {
+  asModelIntent,
+  direct,
+  type Intent,
+  IntentBodySchema,
+  parseIntent,
+} from "../lib/intent";
 
 type IconNode = [string, Record<string, string>][];
 
@@ -148,18 +155,99 @@ async function loadMarkup(name: string): Promise<string> {
 const DEV_SET = new Set(ANIMATION_PATTERNS.flatMap((p) => p.exampleIcons));
 
 type Tally = { icons: number; top1: number; top3: number };
-type Tallies = Record<"dev" | "holdout" | "blind", Tally>;
+type Split = "dev" | "holdout" | "blind";
+type Pass = "geometry" | "a" | "b" | "modelA" | "modelB";
+type Tallies = Record<Split, Record<Pass, Tally>>;
 
-function tallyFor(tallies: Tallies, name: string): Tally {
-  if (name in BLIND) {
-    return tallies.blind;
-  }
-  return DEV_SET.has(name) ? tallies.dev : tallies.holdout;
+type DescriptionPair = { readonly a: string; readonly b: string };
+type ModelPair = { readonly a: unknown; readonly b: unknown };
+
+function emptyTally(): Tally {
+  return { icons: 0, top1: 0, top3: 0 };
 }
 
-const pct = (n: number, d: number) => `${((100 * n) / d).toFixed(0)}%`;
-const line = (label: string, t: Tally) =>
-  `${label.padEnd(8)} icons=${t.icons} top1=${t.top1} (${pct(t.top1, t.icons)}) top3=${t.top3} (${pct(t.top3, t.icons)})`;
+function emptyTallies(): Tallies {
+  return {
+    dev: {
+      geometry: emptyTally(),
+      a: emptyTally(),
+      b: emptyTally(),
+      modelA: emptyTally(),
+      modelB: emptyTally(),
+    },
+    holdout: {
+      geometry: emptyTally(),
+      a: emptyTally(),
+      b: emptyTally(),
+      modelA: emptyTally(),
+      modelB: emptyTally(),
+    },
+    blind: {
+      geometry: emptyTally(),
+      a: emptyTally(),
+      b: emptyTally(),
+      modelA: emptyTally(),
+      modelB: emptyTally(),
+    },
+  };
+}
+
+function splitOf(name: string): Split {
+  if (name in BLIND) {
+    return "blind";
+  }
+  return DEV_SET.has(name) ? "dev" : "holdout";
+}
+
+function loadDescriptions(): Record<string, DescriptionPair> {
+  const file = path.join(
+    process.cwd(),
+    "scripts",
+    "fixtures",
+    "icon-descriptions.json"
+  );
+  return JSON.parse(readFileSync(file, "utf8")) as Record<
+    string,
+    DescriptionPair
+  >;
+}
+
+function readModelIntent(raw: unknown): Intent | null {
+  const parsed = IntentBodySchema.safeParse(raw);
+  return parsed.success ? asModelIntent(parsed.data) : null;
+}
+
+function loadModelIntents(): Record<string, ModelPair> {
+  const file = path.join(
+    process.cwd(),
+    "scripts",
+    "fixtures",
+    "icon-model-intents.json"
+  );
+  return JSON.parse(readFileSync(file, "utf8")) as Record<string, ModelPair>;
+}
+
+function hits(
+  ranking: readonly AnimationPatternId[],
+  accepted: readonly AnimationPatternId[]
+): { hit1: boolean; hit3: boolean } {
+  const top = ranking.slice(0, 3);
+  return {
+    hit1: accepted.includes(top[0]),
+    hit3: top.some((id) => accepted.includes(id)),
+  };
+}
+
+function addHit(tally: Tally, hit: { hit1: boolean; hit3: boolean }) {
+  tally.icons += 1;
+  tally.top1 += Number(hit.hit1);
+  tally.top3 += Number(hit.hit3);
+}
+
+const pct = (n: number, d: number) =>
+  d === 0 ? "n/a" : `${((100 * n) / d).toFixed(0)}%`;
+const line = (split: Split, pass: string, t: Tally) =>
+  `${split.padEnd(8)} ${pass.padEnd(16)} icons=${t.icons} top1=${t.top1} (${pct(t.top1, t.icons)}) top3=${t.top3} (${pct(t.top3, t.icons)})`;
 
 function printPlan(name: string, casting: Casting) {
   const tracks = [...casting.plan.tracks.entries()].map(([key, track]) => ({
@@ -187,11 +275,9 @@ function printPlan(name: string, casting: Casting) {
 async function main() {
   const verbose = process.argv.includes("--verbose");
   const plans = process.argv.includes("--plans");
-  const tallies = {
-    dev: { icons: 0, top1: 0, top3: 0 },
-    holdout: { icons: 0, top1: 0, top3: 0 },
-    blind: { icons: 0, top1: 0, top3: 0 },
-  };
+  const tallies = emptyTallies();
+  const descriptions = loadDescriptions();
+  const modelIntents = loadModelIntents();
 
   const labels = { ...LABELS, ...BLIND };
   const names = Object.keys(labels);
@@ -203,26 +289,44 @@ async function main() {
     const started = performance.now();
     const reading = readIcon(markups[index]);
     slowest = Math.max(slowest, performance.now() - started);
-    const ids = reading.ranking.slice(0, 3);
-    const hit1 = accepted.includes(ids[0]);
-    const hit3 = ids.some((id) => accepted.includes(id));
-    const tally = tallyFor(tallies, name);
-    tally.icons += 1;
-    tally.top1 += Number(hit1);
-    tally.top3 += Number(hit3);
-    if (verbose || !hit3) {
+    const pair = descriptions[name];
+    const models = modelIntents[name];
+    const geo = hits(reading.ranking, accepted);
+    const described = (text: string | undefined) =>
+      text?.trim()
+        ? hits(direct(reading, parseIntent(text)).ranking, accepted)
+        : geo;
+    const modeled = (raw: unknown) => {
+      const intent = readModelIntent(raw);
+      return intent ? hits(direct(reading, intent).ranking, accepted) : geo;
+    };
+    const a = described(pair?.a);
+    const b = described(pair?.b);
+    const modelA = modeled(models?.a);
+    const modelB = modeled(models?.b);
+    const split = splitOf(name);
+    addHit(tallies[split].geometry, geo);
+    addHit(tallies[split].a, a);
+    addHit(tallies[split].b, b);
+    addHit(tallies[split].modelA, modelA);
+    addHit(tallies[split].modelB, modelB);
+    if (verbose || !geo.hit3) {
       console.log(
-        `${hit1 ? "TOP1" : hit3 ? "TOP3" : "MISS"} ${name.padEnd(20)} want=${accepted[0].padEnd(22)} got=${ids.join(",")}`
+        `${geo.hit1 ? "TOP1" : geo.hit3 ? "TOP3" : "MISS"} ${name.padEnd(20)} want=${accepted[0].padEnd(22)} got=${reading.ranking.slice(0, 3).join(",")}`
       );
     }
     if (plans) {
-      printPlan(name, reading.castings[ids[0]]);
+      printPlan(name, reading.castings[reading.ranking[0]]);
     }
   }
 
-  console.log(line("dev", tallies.dev));
-  console.log(line("holdout", tallies.holdout));
-  console.log(line("blind", tallies.blind));
+  for (const split of ["dev", "holdout", "blind"] as const) {
+    console.log(line(split, "geometry-only", tallies[split].geometry));
+    console.log(line(split, "+desc a", tallies[split].a));
+    console.log(line(split, "+desc b", tallies[split].b));
+    console.log(line(split, "+model a", tallies[split].modelA));
+    console.log(line(split, "+model b", tallies[split].modelB));
+  }
   console.log(`slowest_ms=${slowest.toFixed(2)}`);
 }
 

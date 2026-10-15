@@ -3,35 +3,73 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useReducer } from "react";
 import { AdviceStatus } from "@/components/studio/advice-status";
-import { mergeAdvice } from "@/components/studio/advised-options";
 import { Dropzone, isSvgFile } from "@/components/studio/dropzone";
 import { OptionList } from "@/components/studio/option-list";
 import { Preview } from "@/components/studio/preview";
+import { StaticIcon } from "@/components/studio/static-icon";
 import {
-  type AdviceState,
   INITIAL_STUDIO_STATE,
+  optionsFrom,
   readUpload,
+  type StudioState,
   studioReducer,
 } from "@/components/studio/studio-state";
-import type { SuggestAdvice } from "@/lib/cursor-suggest";
+import type { RefinedIntent } from "@/lib/cursor-suggest";
+import { MAX_DESCRIPTION_CHARS, normalizeDescription } from "@/lib/intent";
 
-async function requestAdvice(markup: string): Promise<AdviceState> {
+async function requestRefine(
+  markup: string,
+  description: string,
+  generationId: number
+): Promise<
+  | { type: "refined"; generationId: number; refined: RefinedIntent }
+  | { type: "refineFailed"; generationId: number; message: string }
+> {
   try {
     const response = await fetch("/api/suggest-animation", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ markup }),
+      body: JSON.stringify({ markup, description }),
     });
     if (!response.ok) {
       return {
-        status: "failed",
-        message: `Advice request failed (${response.status}).`,
+        type: "refineFailed",
+        generationId,
+        message: `Reread failed (${response.status}).`,
       };
     }
-    return { status: "done", advice: (await response.json()) as SuggestAdvice };
+    return {
+      type: "refined",
+      generationId,
+      refined: (await response.json()) as RefinedIntent,
+    };
   } catch {
-    return { status: "failed", message: "Advice request failed." };
+    return {
+      type: "refineFailed",
+      generationId,
+      message: "Reread failed.",
+    };
   }
+}
+
+function errorOf(state: StudioState): string | null {
+  if (state.status === "error") {
+    return state.message;
+  }
+  if (state.status === "empty") {
+    return null;
+  }
+  return state.error;
+}
+
+function draftValue(state: StudioState): string {
+  if (state.status === "describing" || state.status === "revising") {
+    return state.draft;
+  }
+  if (state.status === "playing") {
+    return state.description;
+  }
+  return "";
 }
 
 export const Studio = () => {
@@ -45,11 +83,7 @@ export const Studio = () => {
         type: "failed",
         message: error instanceof Error ? error.message : "Could not read SVG.",
       });
-      return;
     }
-    requestAdvice(markup).then((advice) =>
-      dispatch({ type: "advised", markup, advice })
-    );
   };
 
   const handleFile = async (file: File) => {
@@ -63,12 +97,23 @@ export const Studio = () => {
     load(await file.text(), file.name);
   };
 
-  let errorMessage: string | null = null;
-  if (state.status === "error") {
-    errorMessage = state.message;
-  } else if (state.status === "ready") {
-    errorMessage = state.error;
-  }
+  const submit = () => {
+    const before =
+      state.status === "playing" || state.status === "revising"
+        ? state.generationId
+        : 0;
+    const next = studioReducer(state, { type: "submitted" });
+    dispatch({ type: "submitted" });
+    if (next.status !== "playing" || next.generationId === before) {
+      return;
+    }
+    requestRefine(next.upload.markup, next.description, next.generationId).then(
+      (action) => dispatch(action)
+    );
+  };
+
+  const errorMessage = errorOf(state);
+  const canSubmit = normalizeDescription(draftValue(state)).length > 0;
 
   return (
     <div className="mx-auto mt-10 flex w-full max-w-[960px] flex-col gap-6 px-4 pb-24">
@@ -88,7 +133,12 @@ export const Studio = () => {
         )}
       </AnimatePresence>
 
-      {state.status === "ready" ? (
+      {state.status === "empty" || state.status === "error" ? (
+        <Dropzone
+          onFile={handleFile}
+          onPaste={(markup) => load(markup, "pasted.svg")}
+        />
+      ) : (
         <motion.div
           animate={{ opacity: 1 }}
           className="grid gap-6 min-[820px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
@@ -100,54 +150,96 @@ export const Studio = () => {
               className="supports-[corner-shape:squircle]:corner-squircle flex aspect-square w-full items-center justify-center rounded-[20px] bg-white text-foreground supports-[corner-shape:squircle]:rounded-[30px] dark:bg-[#0A0A0A]"
               data-testid="studio-preview"
             >
-              <Preview
-                casting={state.upload.reading.castings[state.selectedId]}
-                patternId={state.selectedId}
-                selection={state.selections}
-                tree={state.upload.reading.tree}
-              />
+              {state.status === "describing" ? (
+                <StaticIcon size={160} tree={state.upload.reading.tree} />
+              ) : (
+                <Preview
+                  casting={state.directed.castings[state.selectedId]}
+                  generationId={state.generationId}
+                  patternId={state.selectedId}
+                  selection={state.selections}
+                  tree={state.upload.reading.tree}
+                />
+              )}
             </div>
             <div
               className="flex flex-col gap-1 font-mono text-xs"
               data-testid="studio-analysis"
             >
               <span className="text-foreground">{state.upload.fileName}</span>
-              <span className="text-secondary leading-relaxed">
-                {state.upload.reading.summary}
-              </span>
-              {state.upload.reading.facts.map((fact) => (
-                <span className="text-secondary leading-relaxed" key={fact}>
-                  {fact}
-                </span>
-              ))}
-              {state.upload.reading.castings[state.selectedId].evidence.map(
-                (item) => (
-                  <span
-                    className="text-secondary leading-relaxed"
-                    key={`${item.stat}-${item.therefore}`}
-                  >
-                    {item.stat}, so {item.therefore}
+              {state.status !== "describing" && (
+                <>
+                  <span className="text-secondary leading-relaxed">
+                    {state.directed.summary}
                   </span>
-                )
+                  {state.directed.facts.map((fact) => (
+                    <span className="text-secondary leading-relaxed" key={fact}>
+                      {fact}
+                    </span>
+                  ))}
+                  {state.directed.castings[state.selectedId].evidence.map(
+                    (item) => (
+                      <span
+                        className="text-secondary leading-relaxed"
+                        key={`${item.stat}-${item.therefore}`}
+                      >
+                        {item.stat}, so {item.therefore}
+                      </span>
+                    )
+                  )}
+                </>
               )}
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <h2 className="font-sans text-xl">How it could move</h2>
-            <OptionList
-              onSelect={(patternId) =>
-                dispatch({ type: "selected", patternId })
-              }
-              options={mergeAdvice(
-                state.upload.reading,
-                state.advice.status === "done" &&
-                  state.advice.advice.source === "cursor"
-                  ? state.advice.advice.options
-                  : null
+            <label className="flex flex-col gap-2" htmlFor="studio-description">
+              <span className="font-sans text-xl">What is this icon for?</span>
+              <textarea
+                className="min-h-28 w-full rounded-[12px] border border-neutral-300 bg-white p-3 font-mono text-foreground text-sm outline-none focus:border-primary dark:border-neutral-700 dark:bg-[#0A0A0A]"
+                data-testid="studio-description"
+                id="studio-description"
+                maxLength={MAX_DESCRIPTION_CHARS}
+                onChange={(event) =>
+                  dispatch({ type: "drafted", text: event.target.value })
+                }
+                placeholder="alerts, upload, favorite…"
+                value={draftValue(state)}
+              />
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="cursor-pointer rounded-[10px] bg-primary px-3 py-1.5 font-mono text-white text-xs disabled:opacity-40"
+                data-testid="studio-submit"
+                disabled={!canSubmit}
+                onClick={submit}
+                type="button"
+              >
+                Animate
+              </button>
+              {state.status === "revising" && (
+                <button
+                  className="cursor-pointer rounded-[10px] px-3 py-1.5 font-mono text-secondary text-xs hover:text-foreground"
+                  data-testid="studio-revert"
+                  onClick={() => dispatch({ type: "reverted" })}
+                  type="button"
+                >
+                  Keep this
+                </button>
               )}
-              selectedId={state.selectedId}
-            />
-            <AdviceStatus advice={state.advice} />
+            </div>
+            {state.status !== "describing" && (
+              <>
+                <h2 className="font-sans text-xl">How it could move</h2>
+                <OptionList
+                  onSelect={(patternId) =>
+                    dispatch({ type: "selected", patternId })
+                  }
+                  options={optionsFrom(state.directed)}
+                  selectedId={state.selectedId}
+                />
+                <AdviceStatus refine={state.refine} />
+              </>
+            )}
           </div>
           <div className="min-[820px]:col-span-2">
             <Dropzone
@@ -157,11 +249,6 @@ export const Studio = () => {
             />
           </div>
         </motion.div>
-      ) : (
-        <Dropzone
-          onFile={handleFile}
-          onPaste={(markup) => load(markup, "pasted.svg")}
-        />
       )}
     </div>
   );

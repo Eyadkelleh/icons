@@ -1,0 +1,354 @@
+{
+  "bell": {
+    "a": "notifications",
+    "b": "opens the inbox for mentions and team updates"
+  },
+  "bell-ring": {
+    "a": "urgent alerts only",
+    "b": "something needs your attention right now in the app"
+  },
+  "alarm-clock": {
+    "a": "set a reminder",
+    "b": "pick when we should nudge you about this task"
+  },
+  "plus": {
+    "a": "add new",
+    "b": "create another row in the current list"
+  },
+  "cog": {
+    "a": "advanced options",
+    "b": "tweak how this integration behaves behind the scenes"
+  },
+  "settings": {
+    "a": "preferences",
+    "b": "change your account and workspace defaults here"
+  },
+  "heart": {
+    "a": "favorite",
+    "b": "save this recipe to your personal collection"
+  },
+  "star": {
+    "a": "bookmark",
+    "b": "pin this project so it stays at the top"
+  },
+  "thumbs-up": {
+    "a": "like",
+    "b": "tell the author this comment was helpful"
+  },
+  "upload": {
+    "a": "upload file",
+    "b": "attach your signed PDF before submitting the form"
+  },
+  "download": {
+    "a": "download",
+    "b": "save the invoice PDF to your computer"
+  },
+  "cloud-upload": {
+    "a": "sync to cloud",
+    "b": "push local edits up to the shared drive"
+  },
+  "arrow-down-to-line": {
+    "a": "save locally",
+    "b": "pull the latest export down to your machine"
+  },
+  "log-out": {
+    "a": "sign out",
+    "b": "end your session on this shared kiosk"
+  },
+  "arrow-up": {
+    "a": "move up",
+    "b": "reorder this item one slot higher in the queue"
+  },
+  "arrow-down": {
+    "a": "move down",
+    "b": "drop this section lower on the page"
+  },
+  "arrow-right": {
+    "a": "next",
+    "b": "continue to the shipping details step"
+  },
+  "square-arrow-up": {
+    "a": "share externally",
+    "b": "open this doc in a new browser tab"
+  },
+  "sun": {
+    "a": "light mode",
+    "b": "switch the UI back to the daytime theme"
+  },
+  "wifi": {
+    "a": "network",
+    "b": "shows whether you're online for live sync"
+  },
+  "grip": {
+    "a": "drag handle",
+    "b": "grab here to reorder cards on the board"
+  },
+  "signal": {
+    "a": "connection strength",
+    "b": "how good the cell link is for field uploads"
+  },
+  "volume-2": {
+    "a": "sound on",
+    "b": "unmute alerts for this conversation"
+  },
+  "radio": {
+    "a": "live stream",
+    "b": "listen to the station feed in the background"
+  },
+  "maximize": {
+    "a": "fullscreen",
+    "b": "expand the video player to fill the screen"
+  },
+  "expand": {
+    "a": "show more",
+    "b": "open the collapsed details for this shipment"
+  },
+  "minimize": {
+    "a": "collapse",
+    "b": "hide the side panel and focus on the canvas"
+  },
+  "scan": {
+    "a": "scan code",
+    "b": "use the camera to log in with a QR badge"
+  },
+  "fullscreen": {
+    "a": "enter fullscreen",
+    "b": "present this dashboard on the meeting room display"
+  },
+  "copy": {
+    "a": "copy",
+    "b": "duplicate the invite link to your clipboard"
+  },
+  "file-stack": {
+    "a": "documents",
+    "b": "all attachments tied to this support ticket"
+  },
+  "square-stack": {
+    "a": "versions",
+    "b": "flip through saved layouts for this template"
+  },
+  "layers": {
+    "a": "layers",
+    "b": "toggle visibility of background maps in the editor"
+  },
+  "clock": {
+    "a": "time",
+    "b": "when this meeting was last updated"
+  },
+  "history": {
+    "a": "history",
+    "b": "see every change made to this record"
+  },
+  "timer": {
+    "a": "countdown",
+    "b": "time left before the parking reservation expires"
+  },
+  "battery": {
+    "a": "battery",
+    "b": "rough idea of device charge during a long shift"
+  },
+  "battery-full": {
+    "a": "fully charged",
+    "b": "device is topped off and safe for the field day"
+  },
+  "battery-medium": {
+    "a": "half battery",
+    "b": "you might want to plug in before the next route"
+  },
+  "chart-column": {
+    "a": "stats",
+    "b": "weekly signups broken down by plan tier"
+  },
+  "chart-bar": {
+    "a": "analytics",
+    "b": "compare revenue across regions this quarter"
+  },
+  "check": {
+    "a": "done",
+    "b": "mark this subtask complete for the sprint"
+  },
+  "check-check": {
+    "a": "read",
+    "b": "both people have seen the latest thread reply"
+  },
+  "circle-check": {
+    "a": "verified",
+    "b": "this vendor passed our compliance review"
+  },
+  "lock": {
+    "a": "locked",
+    "b": "only admins can edit this published policy"
+  },
+  "lock-open": {
+    "a": "unlock",
+    "b": "allow teammates to edit the shared brief again"
+  },
+  "search": {
+    "a": "search",
+    "b": "find customers by name or order number"
+  },
+  "zoom-in": {
+    "a": "zoom in",
+    "b": "get a closer look at the floor plan detail"
+  },
+  "smile": {
+    "a": "happy",
+    "b": "customer rated the visit as positive"
+  },
+  "frown": {
+    "a": "unhappy",
+    "b": "feedback flagged a bad experience at checkout"
+  },
+  "laugh": {
+    "a": "delighted",
+    "b": "they loved the demo enough to leave a glowing note"
+  },
+  "meh": {
+    "a": "neutral",
+    "b": "survey response was neither good nor bad"
+  },
+  "angry": {
+    "a": "very upset",
+    "b": "escalation score hit the threshold for a callback"
+  },
+  "arrow-left": {
+    "a": "back",
+    "b": "return to the product list without saving"
+  },
+  "arrow-big-up": {
+    "a": "priority up",
+    "b": "bump this ticket to the top of the queue"
+  },
+  "chevron-down": {
+    "a": "dropdown",
+    "b": "pick a different billing country from the list"
+  },
+  "cloud-download": {
+    "a": "fetch from cloud",
+    "b": "download the backup that lives in our bucket"
+  },
+  "log-in": {
+    "a": "sign in",
+    "b": "access your workspace with company SSO"
+  },
+  "import": {
+    "a": "import",
+    "b": "bring in contacts from last year's CSV export"
+  },
+  "arrow-up-from-line": {
+    "a": "export upload",
+    "b": "send the finished report back to the server"
+  },
+  "maximize-2": {
+    "a": "resize window",
+    "b": "pop the chart out to its own panel"
+  },
+  "minimize-2": {
+    "a": "restore size",
+    "b": "dock the preview back into the main layout"
+  },
+  "shrink": {
+    "a": "fit on screen",
+    "b": "scale the whole diagram so nothing is clipped"
+  },
+  "scan-line": {
+    "a": "barcode scan",
+    "b": "register inventory by scanning shelf labels"
+  },
+  "clock-3": {
+    "a": "afternoon slot",
+    "b": "meetings scheduled after lunch show here"
+  },
+  "clock-9": {
+    "a": "morning slot",
+    "b": "early standups and before-noon reminders"
+  },
+  "watch": {
+    "a": "wearable",
+    "b": "pair your smartwatch for step challenges"
+  },
+  "battery-low": {
+    "a": "low battery",
+    "b": "warn the driver to charge before the next stop"
+  },
+  "chart-no-axes-column": {
+    "a": "simple bars",
+    "b": "quick count of open tickets per team"
+  },
+  "signal-high": {
+    "a": "strong signal",
+    "b": "uploads should finish fast on this connection"
+  },
+  "wifi-high": {
+    "a": "great wifi",
+    "b": "you're on a solid network for video calls"
+  },
+  "sun-medium": {
+    "a": "auto brightness",
+    "b": "theme follows room lighting but stays readable"
+  },
+  "loader": {
+    "a": "loading",
+    "b": "please wait while we crunch the monthly totals"
+  },
+  "volume-1": {
+    "a": "quiet alerts",
+    "b": "keep notification sounds low in open offices"
+  },
+  "square-check": {
+    "a": "selected",
+    "b": "include this row in the bulk email send"
+  },
+  "circle-check-big": {
+    "a": "success",
+    "b": "payment went through and the order is confirmed"
+  },
+  "lock-keyhole": {
+    "a": "secure vault",
+    "b": "stored secrets only unlock with your passkey"
+  },
+  "zoom-out": {
+    "a": "zoom out",
+    "b": "see the whole campus map at once"
+  },
+  "search-check": {
+    "a": "filter applied",
+    "b": "results match the saved search you ran last week"
+  },
+  "annoyed": {
+    "a": "frustrated",
+    "b": "user sounded irritated in the last survey comment"
+  },
+  "smile-plus": {
+    "a": "add reaction",
+    "b": "drop a friendly emoji on their status update"
+  },
+  "bell-dot": {
+    "a": "unread alerts",
+    "b": "you have new activity since you last checked in"
+  },
+  "bell-plus": {
+    "a": "subscribe",
+    "b": "get notified when this repo gets a release"
+  },
+  "files": {
+    "a": "multiple files",
+    "b": "bundle of specs attached to the RFP"
+  },
+  "copy-plus": {
+    "a": "duplicate and add",
+    "b": "clone this template then start a new variant"
+  },
+  "heart-pulse": {
+    "a": "health metric",
+    "b": "live vitals stream from the connected monitor"
+  },
+  "diamond": {
+    "a": "premium",
+    "b": "upgrade perks reserved for pro members"
+  },
+  "sparkle": {
+    "a": "new and shiny",
+    "b": "highlights features we just shipped this release"
+  }
+}
